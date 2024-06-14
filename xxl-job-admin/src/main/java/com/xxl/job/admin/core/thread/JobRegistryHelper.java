@@ -1,11 +1,14 @@
 package com.xxl.job.admin.core.thread;
 
+import com.google.gson.JsonSyntaxException;
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.admin.core.model.XxlJobGroup;
+import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobRegistry;
 import com.xxl.job.core.biz.model.RegistryParam;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.enums.RegistryConfig;
+import com.xxl.job.core.util.GsonTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -196,9 +199,19 @@ public class JobRegistryHelper {
 		return ReturnT.SUCCESS;
 	}
 
+	public ReturnT<String> addJob(String xxlJobInfo) {
+		try {
+			XxlJobInfo _xxlJobInfo = GsonTool.fromJson(xxlJobInfo, XxlJobInfo.class);
+			return XxlJobAdminConfig.getAdminConfig().getXxlJobService().add(_xxlJobInfo);
+		} catch (JsonSyntaxException jse){
+			return new ReturnT<>(ReturnT.FAIL_CODE, "json parse err: "+ jse.getMessage());
+		} catch (Exception e){
+			return new ReturnT<>(ReturnT.FAIL_CODE, e.getMessage());
+		}
+	}
+
 	private void freshGroupRegistryInfo(RegistryParam registryParam){
 		// Under consideration, prevent affecting core tables
 	}
-
 
 }

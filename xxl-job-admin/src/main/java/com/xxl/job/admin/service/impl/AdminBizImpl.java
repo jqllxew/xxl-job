@@ -6,6 +6,7 @@ import com.xxl.job.core.biz.AdminBiz;
 import com.xxl.job.core.biz.model.HandleCallbackParam;
 import com.xxl.job.core.biz.model.RegistryParam;
 import com.xxl.job.core.biz.model.ReturnT;
+import com.xxl.job.core.util.GsonTool;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +16,6 @@ import java.util.List;
  */
 @Service
 public class AdminBizImpl implements AdminBiz {
-
 
     @Override
     public ReturnT<String> callback(List<HandleCallbackParam> callbackParamList) {
@@ -30,6 +30,11 @@ public class AdminBizImpl implements AdminBiz {
     @Override
     public ReturnT<String> registryRemove(RegistryParam registryParam) {
         return JobRegistryHelper.getInstance().registryRemove(registryParam);
+    }
+
+    @Override
+    public ReturnT<String> addJob(String xxlJobInfo) {
+        return JobRegistryHelper.getInstance().addJob(xxlJobInfo);
     }
 
 }

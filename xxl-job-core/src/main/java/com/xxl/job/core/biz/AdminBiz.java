@@ -45,4 +45,5 @@ public interface AdminBiz {
     // ---------------------- biz (custome) ----------------------
     // group、job ... manage
 
+    ReturnT<String> addJob(String xxlJobInfo);
 }

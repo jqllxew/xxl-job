@@ -3,6 +3,7 @@ package com.xxl.job.admin.core.conf;
 import com.xxl.job.admin.core.alarm.JobAlarmer;
 import com.xxl.job.admin.core.scheduler.XxlJobScheduler;
 import com.xxl.job.admin.dao.*;
+import com.xxl.job.admin.service.XxlJobService;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,7 +69,8 @@ public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
     private int logretentiondays;
 
     // dao, service
-
+    @Resource
+    private XxlJobService xxlJobService;
     @Resource
     private XxlJobLogDao xxlJobLogDao;
     @Resource
@@ -121,6 +123,10 @@ public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
             return -1;  // Limit greater than or equal to 7, otherwise close
         }
         return logretentiondays;
+    }
+
+    public XxlJobService getXxlJobService(){
+        return xxlJobService;
     }
 
     public XxlJobLogDao getXxlJobLogDao() {
