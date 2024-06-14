@@ -146,7 +146,6 @@ public class JobRegistryHelper {
 		}
 	}
 
-
 	// ---------------------- helper ----------------------
 
 	public ReturnT<String> registry(RegistryParam registryParam) {
@@ -197,17 +196,6 @@ public class JobRegistryHelper {
 		});
 
 		return ReturnT.SUCCESS;
-	}
-
-	public ReturnT<String> addJob(String xxlJobInfo) {
-		try {
-			XxlJobInfo _xxlJobInfo = GsonTool.fromJson(xxlJobInfo, XxlJobInfo.class);
-			return XxlJobAdminConfig.getAdminConfig().getXxlJobService().add(_xxlJobInfo);
-		} catch (JsonSyntaxException jse){
-			return new ReturnT<>(ReturnT.FAIL_CODE, "json parse err: "+ jse.getMessage());
-		} catch (Exception e){
-			return new ReturnT<>(ReturnT.FAIL_CODE, e.getMessage());
-		}
 	}
 
 	private void freshGroupRegistryInfo(RegistryParam registryParam){

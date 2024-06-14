@@ -46,4 +46,6 @@ public interface AdminBiz {
     // group、job ... manage
 
     ReturnT<String> addJob(String xxlJobInfo);
+
+    ReturnT<String> addJobAndStart(String xxlJobInfo);
 }

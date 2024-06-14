@@ -56,21 +56,24 @@ public class JobApiController {
         }
 
         // services mapping
-        if ("addJob".equals(uri)){
-            return adminBiz.addJob(data);
-        } else if ("callback".equals(uri)) {
-            List<HandleCallbackParam> callbackParamList = GsonTool.fromJson(data, List.class, HandleCallbackParam.class);
-            return adminBiz.callback(callbackParamList);
-        } else if ("registry".equals(uri)) {
-            RegistryParam registryParam = GsonTool.fromJson(data, RegistryParam.class);
-            return adminBiz.registry(registryParam);
-        } else if ("registryRemove".equals(uri)) {
-            RegistryParam registryParam = GsonTool.fromJson(data, RegistryParam.class);
-            return adminBiz.registryRemove(registryParam);
-        } else {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, uri-mapping("+ uri +") not found.");
+        switch (uri) {
+            case "addJob":
+                return adminBiz.addJob(data);
+            case "addJobAndStart":
+                return adminBiz.addJobAndStart(data);
+            case "callback":
+                List<HandleCallbackParam> callbackParamList = GsonTool.fromJson(data, List.class, HandleCallbackParam.class);
+                return adminBiz.callback(callbackParamList);
+            case "registry": {
+                RegistryParam registryParam = GsonTool.fromJson(data, RegistryParam.class);
+                return adminBiz.registry(registryParam);
+            }
+            case "registryRemove": {
+                RegistryParam registryParam = GsonTool.fromJson(data, RegistryParam.class);
+                return adminBiz.registryRemove(registryParam);
+            }
+            default:
+                return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, uri-mapping(" + uri + ") not found.");
         }
-
     }
-
 }

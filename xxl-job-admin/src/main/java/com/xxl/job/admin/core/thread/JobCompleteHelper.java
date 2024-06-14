@@ -1,12 +1,15 @@
 package com.xxl.job.admin.core.thread;
 
+import com.google.gson.JsonSyntaxException;
 import com.xxl.job.admin.core.complete.XxlJobCompleter;
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
+import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.core.biz.model.HandleCallbackParam;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.util.DateUtil;
+import com.xxl.job.core.util.GsonTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -179,6 +182,27 @@ public class JobCompleteHelper {
 		return ReturnT.SUCCESS;
 	}
 
+	public ReturnT<String> addJob(String xxlJobInfo) {
+		try {
+			XxlJobInfo _xxlJobInfo = GsonTool.fromJson(xxlJobInfo, XxlJobInfo.class);
+			return XxlJobAdminConfig.getAdminConfig().getXxlJobService().add(_xxlJobInfo);
+		} catch (JsonSyntaxException jse){
+			return new ReturnT<>(ReturnT.FAIL_CODE, "json parse err: "+ jse.getMessage());
+		} catch (Exception e){
+			return new ReturnT<>(ReturnT.FAIL_CODE, e.getMessage());
+		}
+	}
 
-
+	public ReturnT<String> addJobAndStart(String xxlJobInfo) {
+		ReturnT<String> ret = addJob(xxlJobInfo);
+		if (ret.getCode() != ReturnT.SUCCESS_CODE){
+			return ret;
+		}
+		try {
+			return XxlJobAdminConfig.getAdminConfig().getXxlJobService()
+					.start(Integer.parseInt(ret.getContent()));
+		} catch (Exception e){
+			return new ReturnT<>(ReturnT.FAIL_CODE, e.getMessage());
+		}
+	}
 }
