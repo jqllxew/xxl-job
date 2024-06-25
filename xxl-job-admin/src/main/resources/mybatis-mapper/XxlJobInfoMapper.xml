@@ -5,6 +5,7 @@
 
 	<resultMap id="XxlJobInfo" type="com.xxl.job.admin.core.model.XxlJobInfo" >
 		<result column="id" property="id" />
+		<result column="flag_id" property="flagId" />
 
 		<result column="job_group" property="jobGroup" />
 	    <result column="job_desc" property="jobDesc" />
@@ -40,6 +41,7 @@
 
 	<sql id="Base_Column_List">
 		t.id,
+		t.flag_id,
 		t.job_group,
 		t.job_desc,
 		t.add_time,
@@ -113,6 +115,7 @@
 
 	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobInfo" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO xxl_job_info (
+			flag_id,
 			job_group,
 			job_desc,
 			add_time,
@@ -137,6 +140,7 @@
 			trigger_last_time,
 			trigger_next_time
 		) VALUES (
+			#{flagId},
 			#{jobGroup},
 			#{jobDesc},
 			#{addTime},
@@ -199,6 +203,19 @@
 			trigger_last_time = #{triggerLastTime},
 			trigger_next_time = #{triggerNextTime}
 		WHERE id = #{id}
+	</update>
+
+	<update id="stopByFlag" parameterType="java.util.HashMap">
+		UPDATE xxl_job_info
+		SET
+			trigger_status = 0,
+			trigger_last_time = 0,
+			trigger_next_time = 0
+		WHERE job_group = #{jobGroup}
+		AND flag_id in
+		<foreach collection="flagIds" item="item" open="(" close=")" separator="," >
+			#{item}
+		</foreach>
 	</update>
 
 	<delete id="delete" parameterType="java.util.HashMap">

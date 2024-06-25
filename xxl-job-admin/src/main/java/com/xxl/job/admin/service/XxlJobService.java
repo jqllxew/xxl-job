@@ -5,6 +5,7 @@ import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobUser;
 import com.xxl.job.core.biz.model.ReturnT;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
@@ -67,6 +68,7 @@ public interface XxlJobService {
 	 * @return
 	 */
 	public ReturnT<String> stop(int id);
+	public ReturnT<String> stop(Integer jobGroup, Collection<Long> flagIds);
 
 	/**
 	 * trigger

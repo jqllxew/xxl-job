@@ -18,6 +18,7 @@ import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.enums.ExecutorBlockStrategyEnum;
 import com.xxl.job.core.glue.GlueTypeEnum;
 import com.xxl.job.core.util.DateUtil;
+import com.xxl.job.core.util.GsonTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -153,10 +154,10 @@ public class XxlJobServiceImpl implements XxlJobService {
 		jobInfo.setGlueUpdatetime(new Date());
 		xxlJobInfoDao.save(jobInfo);
 		if (jobInfo.getId() < 1) {
-			return new ReturnT<String>(ReturnT.FAIL_CODE, (I18nUtil.getString("jobinfo_field_add")+I18nUtil.getString("system_fail")) );
+			return new ReturnT<>(ReturnT.FAIL_CODE, (I18nUtil.getString("jobinfo_field_add") + I18nUtil.getString("system_fail")));
 		}
 
-		return new ReturnT<String>(String.valueOf(jobInfo.getId()));
+		return new ReturnT<>(String.valueOf(jobInfo.getId()));
 	}
 
 	private boolean isNumeric(String str){
@@ -337,18 +338,23 @@ public class XxlJobServiceImpl implements XxlJobService {
 
 	@Override
 	public ReturnT<String> stop(int id) {
-        XxlJobInfo xxlJobInfo = xxlJobInfoDao.loadById(id);
-
-		xxlJobInfo.setTriggerStatus(0);
-		xxlJobInfo.setTriggerLastTime(0);
-		xxlJobInfo.setTriggerNextTime(0);
-
-		xxlJobInfo.setUpdateTime(new Date());
-		xxlJobInfoDao.update(xxlJobInfo);
+		XxlJobInfo xxlJobInfo = xxlJobInfoDao.loadById(id);
+		if (xxlJobInfo != null){
+			xxlJobInfo.setTriggerStatus(0);
+			xxlJobInfo.setTriggerLastTime(0);
+			xxlJobInfo.setTriggerNextTime(0);
+			xxlJobInfo.setUpdateTime(new Date());
+			xxlJobInfoDao.update(xxlJobInfo);
+		}
 		return ReturnT.SUCCESS;
 	}
 
-
+	@Override
+	public ReturnT<String> stop(Integer jobGroup, Collection<Long> flagIds) {
+		if (flagIds == null || flagIds.size() == 0) return ReturnT.SUCCESS;
+		xxlJobInfoDao.stopByFlag(jobGroup, flagIds);
+		return ReturnT.SUCCESS;
+	}
 
 	@Override
 	public ReturnT<String> trigger(XxlJobUser loginUser, int jobId, String executorParam, String addressList) {

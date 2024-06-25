@@ -3,6 +3,7 @@ package com.xxl.job.admin.core.thread;
 import com.google.gson.JsonSyntaxException;
 import com.xxl.job.admin.core.complete.XxlJobCompleter;
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
+import com.xxl.job.admin.core.model.FlagVO;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.core.util.I18nUtil;
@@ -13,6 +14,7 @@ import com.xxl.job.core.util.GsonTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.*;
@@ -182,18 +184,24 @@ public class JobCompleteHelper {
 		return ReturnT.SUCCESS;
 	}
 
-	public ReturnT<String> addJob(String xxlJobInfo) {
+	public ReturnT<String> addJob(XxlJobInfo xxlJobInfo){
 		try {
-			XxlJobInfo _xxlJobInfo = GsonTool.fromJson(xxlJobInfo, XxlJobInfo.class);
-			return XxlJobAdminConfig.getAdminConfig().getXxlJobService().add(_xxlJobInfo);
-		} catch (JsonSyntaxException jse){
-			return new ReturnT<>(ReturnT.FAIL_CODE, "json parse err: "+ jse.getMessage());
-		} catch (Exception e){
+			return XxlJobAdminConfig.getAdminConfig().getXxlJobService().add(xxlJobInfo);
+		}catch (Exception e){
 			return new ReturnT<>(ReturnT.FAIL_CODE, e.getMessage());
 		}
 	}
 
-	public ReturnT<String> addJobAndStart(String xxlJobInfo) {
+	public ReturnT<String> addJob(String xxlJobInfo) {
+		try {
+			XxlJobInfo _xxlJobInfo = GsonTool.fromJson(xxlJobInfo, XxlJobInfo.class);
+			return addJob(_xxlJobInfo);
+		} catch (JsonSyntaxException jse){
+			return new ReturnT<>(ReturnT.FAIL_CODE, "json parse err: "+ jse.getMessage());
+		}
+	}
+
+	public ReturnT<String> addJobAndStart(XxlJobInfo xxlJobInfo){
 		ReturnT<String> ret = addJob(xxlJobInfo);
 		if (ret.getCode() != ReturnT.SUCCESS_CODE){
 			return ret;
@@ -201,6 +209,42 @@ public class JobCompleteHelper {
 		try {
 			return XxlJobAdminConfig.getAdminConfig().getXxlJobService()
 					.start(Integer.parseInt(ret.getContent()));
+		} catch (Exception e){
+			return new ReturnT<>(ReturnT.FAIL_CODE, e.getMessage());
+		}
+	}
+
+	public ReturnT<String> addJobAndStart(Collection<XxlJobInfo> xxlJobInfos){
+		if (xxlJobInfos == null) return new ReturnT<>(ReturnT.FAIL_CODE, "xxlJobInfos is null");
+		for(XxlJobInfo info : xxlJobInfos){
+			ReturnT<String> ret = addJobAndStart(info);
+			if (ret.getCode() != ReturnT.SUCCESS_CODE){
+				return ret;
+			}
+		}
+		return ReturnT.SUCCESS;
+	}
+
+	public ReturnT<String> addJobAndStart(String xxlJobInfo) {
+		if(GsonTool.isArray(xxlJobInfo)){
+			List<XxlJobInfo> xxlJobInfos = GsonTool.fromJsonList(xxlJobInfo, XxlJobInfo.class);
+			return addJobAndStart(xxlJobInfos);
+		}
+		try {
+			XxlJobInfo _xxlJobInfo = GsonTool.fromJson(xxlJobInfo, XxlJobInfo.class);
+			return addJobAndStart(_xxlJobInfo);
+		}catch (JsonSyntaxException jse){
+			return new ReturnT<>(ReturnT.FAIL_CODE, "json parse err: "+ jse.getMessage());
+		}
+	}
+
+	public ReturnT<String> stopJob(String flag){
+		try{
+			FlagVO _flag = GsonTool.fromJson(flag, FlagVO.class);
+			return XxlJobAdminConfig.getAdminConfig()
+					.getXxlJobService().stop(_flag.getJobGroup(), _flag.getFlagIds());
+		} catch (JsonSyntaxException jse){
+			return new ReturnT<>(ReturnT.FAIL_CODE, "json parse err: "+ jse.getMessage());
 		} catch (Exception e){
 			return new ReturnT<>(ReturnT.FAIL_CODE, e.getMessage());
 		}

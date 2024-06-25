@@ -41,4 +41,9 @@ public class AdminBizImpl implements AdminBiz {
     public ReturnT<String> addJobAndStart(String xxlJobInfo) {
         return JobCompleteHelper.getInstance().addJobAndStart(xxlJobInfo);
     }
+
+    @Override
+    public ReturnT<String> stopJob(String id) {
+        return JobCompleteHelper.getInstance().stopJob(id);
+    }
 }

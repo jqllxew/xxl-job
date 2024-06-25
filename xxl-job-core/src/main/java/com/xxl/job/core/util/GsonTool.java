@@ -1,7 +1,6 @@
 package com.xxl.job.core.util;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.ParameterizedType;
@@ -16,6 +15,16 @@ public class GsonTool {
     private static Gson gson = null;
     static {
             gson= new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+    }
+
+    public static boolean isArray(String jsonString) {
+        try {
+            JsonElement jsonElement = JsonParser.parseString(jsonString);
+            return jsonElement.isJsonArray();
+        } catch (JsonSyntaxException e) {
+            // Invalid JSON
+            return false;
+        }
     }
 
     /**
@@ -51,6 +60,7 @@ public class GsonTool {
         Type type = new ParameterizedType4ReturnT(classOfT, new Class[]{argClassOfT});
         return gson.fromJson(json, type);
     }
+
     public static class ParameterizedType4ReturnT implements ParameterizedType {
         private final Class raw;
         private final Type[] args;
@@ -78,11 +88,13 @@ public class GsonTool {
      * @return
      */
     public static <T> List<T> fromJsonList(String json, Class<T> classOfT) {
-        return gson.fromJson(
-                json,
-                new TypeToken<List<T>>() {
-                }.getType()
-        );
+        Type type = TypeToken.getParameterized(List.class, classOfT).getType();
+        return gson.fromJson(json, type);
+//        return gson.fromJson(
+//                json,
+//                new TypeToken<List<T>>() {
+//                }.getType()
+//        );
     }
 
 }

@@ -10,7 +10,7 @@ import java.util.Date;
 public class XxlJobInfo {
 	
 	private int id;				// 主键ID
-	
+	private Long flagId;
 	private int jobGroup;		// 执行器主键ID
 	private String jobDesc;
 	
@@ -49,6 +49,14 @@ public class XxlJobInfo {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public Long getFlagId() {
+		return flagId;
+	}
+
+	public void setFlagId(Long flagId) {
+		this.flagId = flagId;
 	}
 
 	public int getJobGroup() {

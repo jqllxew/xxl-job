@@ -61,6 +61,8 @@ public class JobApiController {
                 return adminBiz.addJob(data);
             case "addJobAndStart":
                 return adminBiz.addJobAndStart(data);
+            case "stopJob":
+                return adminBiz.stopJob(data);
             case "callback":
                 List<HandleCallbackParam> callbackParamList = GsonTool.fromJson(data, List.class, HandleCallbackParam.class);
                 return adminBiz.callback(callbackParamList);

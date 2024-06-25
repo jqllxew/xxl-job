@@ -56,4 +56,9 @@ public class AdminBizClient implements AdminBiz {
     public ReturnT<String> addJobAndStart(String xxlJobInfo) {
         return XxlJobRemotingUtil.postBody(addressUrl + "api/addJobAndStart", accessToken, timeout, xxlJobInfo, String.class);
     }
+
+    @Override
+    public ReturnT<String> stopJob(String id) {
+        return XxlJobRemotingUtil.postBody(addressUrl+"api/stopJob", accessToken, timeout, id, String.class);
+    }
 }

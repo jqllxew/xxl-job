@@ -4,6 +4,7 @@ import com.xxl.job.admin.core.model.XxlJobInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Collection;
 import java.util.List;
 
 
@@ -32,9 +33,12 @@ public interface XxlJobInfoDao {
 	public int save(XxlJobInfo info);
 
 	public XxlJobInfo loadById(@Param("id") int id);
-	
+
 	public int update(XxlJobInfo xxlJobInfo);
-	
+
+	int stopByFlag(@Param("jobGroup")Integer jobGroup,
+				   @Param("flagIds")Collection<Long> flagIds);
+
 	public int delete(@Param("id") long id);
 
 	public List<XxlJobInfo> getJobsByGroup(@Param("jobGroup") int jobGroup);

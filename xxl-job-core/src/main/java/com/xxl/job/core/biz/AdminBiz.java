@@ -48,4 +48,6 @@ public interface AdminBiz {
     ReturnT<String> addJob(String xxlJobInfo);
 
     ReturnT<String> addJobAndStart(String xxlJobInfo);
+
+    ReturnT<String> stopJob(String id);
 }
